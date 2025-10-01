@@ -2,10 +2,9 @@
 
 import { useSignerStatus } from "@account-kit/react";
 import UserInfoCard from "./components/user-info-card";
-import NftMintCard from "./components/nft-mint-card";
+import NftClaimCard from "./components/nft-claim-card";
 import LoginCard from "./components/login-card";
 import Header from "./components/header";
-import LearnMore from "./components/learn-more";
 
 export default function Home() {
   const signerStatus = useSignerStatus();
@@ -19,9 +18,8 @@ export default function Home() {
             <div className="grid gap-8 md:grid-cols-[1fr_2fr]">
               <div className="flex flex-col gap-8">
                 <UserInfoCard />
-                <LearnMore />
               </div>
-              <NftMintCard />
+              <NftClaimCard />
             </div>
           ) : (
             <div className="flex justify-center items-center h-full pb-[4rem]">

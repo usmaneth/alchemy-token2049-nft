@@ -19,11 +19,11 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useReadNFTData } from "@/app/hooks/useReadNFTData";
-import { useMint } from "@/app/hooks/useMintNFT";
+import { useClaimNFT } from "@/app/hooks/useClaimNFT";
 import { useSmartAccountClient } from "@account-kit/react";
 import { NFT_CONTRACT_ADDRESS } from "@/lib/constants";
 
-export default function NftMintCard() {
+export default function NftClaimCard() {
   const [isImageLoading, setIsImageLoading] = useState(true);
   const [showSuccess, setShowSuccess] = useState(true);
 
@@ -34,7 +34,7 @@ export default function NftMintCard() {
     ownerAddress: client?.account?.address,
   });
 
-  const { isMinting, handleMint, error, transactionUrl } = useMint({
+  const { isClaiming, handleClaim, error, transactionUrl } = useClaimNFT({
     onSuccess: () => {
       refetchCount();
     },
@@ -51,15 +51,17 @@ export default function NftMintCard() {
     }
   }, [transactionUrl]);
 
+  const hasClaimed = count && count > 0;
+
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-0">
         <div className="flex justify-between items-center">
           <div>
-            <CardTitle className="mb-2">Mint an NFT with no gas fees</CardTitle>
+            <CardTitle className="mb-2">Claim your exclusive NFT</CardTitle>
             <CardDescription>
-              Users can mint, trade, and swap with no gas fees or signing
-              through gas sponsorship. Try it out.
+              Claim your exclusive "Alchemy x Token2049 Alpha" NFT with no
+              gas fees, powered by Alchemy's Account Kit and gas sponsorship.
             </CardDescription>
           </div>
           <Badge
@@ -81,7 +83,11 @@ export default function NftMintCard() {
           )}
           <div className="aspect-[4/3] md:aspect-[16/9] w-full relative">
             <Image
-              src={uri ?? ""}
+              src={
+                hasClaimed && uri
+                  ? uri
+                  : "/Token2049_Alchemy2025_PatchDesign_PrintFiles.jpg"
+              }
               alt="NFT Image"
               fill
               className={cn(
@@ -93,11 +99,14 @@ export default function NftMintCard() {
           </div>
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
             <h3 className="font-semibold text-lg text-white">
-              Smart Wallet Quickstart NFT
+              Alchemy x Token2049 Alpha NFT
             </h3>
             <p className="text-sm opacity-90 text-white">
-              Demo collection • Gas-free minting
+              Exclusive NFT collection • Gas-free claiming
             </p>
+          </div>
+          <div className="absolute bottom-[-30px] right-0 bg-transparent p-4">
+            <p className="text-xs text-gray-400">Powered by Polygon Amoy</p>
           </div>
         </div>
 
@@ -113,26 +122,26 @@ export default function NftMintCard() {
           <Button
             className="w-full sm:w-auto gap-2 relative overflow-hidden group"
             size="lg"
-            onClick={handleMint}
-            disabled={isMinting}
+            onClick={handleClaim}
+            disabled={isClaiming || count && count > 0}
           >
             <span
               className={cn(
                 "flex items-center gap-2 transition-transform duration-300",
-                isMinting ? "translate-y-10" : ""
+                isClaiming ? "translate-y-10" : ""
               )}
             >
               <PlusCircle className="h-[18px] w-[18px]" />
-              Mint New NFT
+              {count && count > 0 ? "Already Claimed" : "Claim NFT"}
             </span>
             <span
               className={cn(
                 "absolute inset-0 flex items-center justify-center transition-transform duration-300",
-                isMinting ? "translate-y-0" : "translate-y-10"
+                isClaiming ? "translate-y-0" : "translate-y-10"
               )}
             >
               <Loader2 className="animate-spin h-5 w-5 mr-2" />
-              Minting...
+              Claiming...
             </span>
           </Button>
 
@@ -162,7 +171,7 @@ export default function NftMintCard() {
                         animation: "sweep 1.5s ease-out",
                       }}
                     />
-                    <span className="relative z-10">Successful mint!</span>
+                    <span className="relative z-10">Successfully Claimed!</span>
                     <CheckCircle className="h-4 w-4 relative z-10" />
                     <style jsx>{`
                       @keyframes sweep {

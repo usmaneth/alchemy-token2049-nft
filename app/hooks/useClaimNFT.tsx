@@ -4,34 +4,34 @@ import {
   useSendUserOperation,
 } from "@account-kit/react";
 import { encodeFunctionData } from "viem";
-import { NFT_MINTABLE_ABI_PARSED, NFT_CONTRACT_ADDRESS } from "@/lib/constants";
+import { NFT_CONTRACT_ABI, NFT_CONTRACT_ADDRESS } from "@/config";
 
-export interface UseMintNFTParams {
+export interface UseClaimNFTParams {
   onSuccess?: () => void;
 }
-export interface UseMintReturn {
-  isMinting: boolean;
-  handleMint: () => void;
+export interface UseClaimReturn {
+  isClaiming: boolean;
+  handleClaim: () => void;
   transactionUrl?: string;
   error?: string;
 }
 
-export const useMint = ({ onSuccess }: UseMintNFTParams): UseMintReturn => {
-  const [isMinting, setIsMinting] = useState(false);
+export const useClaimNFT = ({ onSuccess }: UseClaimNFTParams): UseClaimReturn => {
+  const [isClaiming, setIsClaiming] = useState(false);
   const [error, setError] = useState<string>();
 
   const { client } = useSmartAccountClient({});
 
   const handleSuccess = () => {
-    setIsMinting(false);
+    setIsClaiming(false);
     setError(undefined);
     onSuccess?.();
   };
 
   const handleError = (error: Error) => {
-    console.error("Mint error:", error);
-    setIsMinting(false);
-    setError(error.message || "Failed to mint NFT");
+    console.error("Claim error:", error);
+    setIsClaiming(false);
+    setError(error.message || "Failed to claim NFT");
   };
 
   const { sendUserOperationResult, sendUserOperation } = useSendUserOperation({
@@ -40,12 +40,12 @@ export const useMint = ({ onSuccess }: UseMintNFTParams): UseMintReturn => {
     onError: handleError,
     onSuccess: handleSuccess,
     onMutate: () => {
-      setIsMinting(true);
+      setIsClaiming(true);
       setError(undefined);
     },
   });
 
-  const handleMint = useCallback(async () => {
+  const handleClaim = useCallback(async () => {
     if (!client) {
       setError("Wallet not connected");
       return;
@@ -55,9 +55,8 @@ export const useMint = ({ onSuccess }: UseMintNFTParams): UseMintReturn => {
       uo: {
         target: NFT_CONTRACT_ADDRESS,
         data: encodeFunctionData({
-          abi: NFT_MINTABLE_ABI_PARSED,
-          functionName: "mintTo",
-          args: [client.getAddress()],
+          abi: NFT_CONTRACT_ABI,
+          functionName: "claim",
         }),
       },
     });
@@ -71,8 +70,8 @@ export const useMint = ({ onSuccess }: UseMintNFTParams): UseMintReturn => {
   }, [client, sendUserOperationResult?.hash]);
 
   return {
-    isMinting,
-    handleMint,
+    isClaiming,
+    handleClaim,
     transactionUrl,
     error,
   };

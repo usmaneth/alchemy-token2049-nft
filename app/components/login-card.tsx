@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useAuthModal } from "@account-kit/react";
+import Image from "next/image";
+
 export default function LoginPage() {
   const { openAuthModal } = useAuthModal();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -25,19 +27,21 @@ export default function LoginPage() {
       )}
     >
       <CardHeader className={cn("text-center space-y-4 pb-8")}>
-        <CardTitle
-          className={cn(
-            "text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600",
-            "dark:from-white dark:to-gray-300 bg-clip-text text-transparent"
-          )}
-        >
-          Smart Wallets
-        </CardTitle>
+        <div className="flex justify-center items-center gap-4">
+          <Image
+            src="/alchemy-logo.jpg"
+            alt="Alchemy Logo"
+            width={150}
+            height={40}
+            className="h-10 w-auto"
+          />
+          <span className="text-2xl font-light">x</span>
+          <span className="text-2xl font-semibold">Token2049</span>
+        </div>
         <CardDescription
-          className={cn("text-base text-gray-600 dark:text-gray-400")}
+          className={cn("text-base text-gray-600 dark:text-gray-400 pt-4")}
         >
-          Experience seamless onchain UX with smart wallets. Click log in to
-          continue.
+          Log in to claim your exclusive "Alchemy x Token2049 Alpha" NFT.
         </CardDescription>
       </CardHeader>
 

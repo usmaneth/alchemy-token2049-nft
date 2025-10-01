@@ -22,10 +22,10 @@ export default function UserInfo() {
   const [isCopied, setIsCopied] = useState(false);
   const user = useUser();
   const userEmail = user?.email ?? "anon";
-  const { client } = useSmartAccountClient({});
+  const { client, address } = useSmartAccountClient({});
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(client?.account?.address ?? "");
+    navigator.clipboard.writeText(address ?? "");
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
   };
@@ -53,7 +53,7 @@ export default function UserInfo() {
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="font-mono text-xs py-1 px-2">
-              {formatAddress(client?.account?.address ?? "")}
+              {formatAddress(address ?? "")}
             </Badge>
             <TooltipProvider>
               <Tooltip open={isCopied}>
@@ -77,7 +77,6 @@ export default function UserInfo() {
               size="icon"
               className="h-6 w-6"
               onClick={() => {
-                const address = client?.account?.address;
                 if (address && client?.chain?.blockExplorers?.default?.url) {
                   window.open(
                     `${client.chain.blockExplorers.default.url}/address/${address}`,
